@@ -26,9 +26,9 @@ void print(float* X,int num){
 }
 
 int main() {
-    float A = new float[N];
-    float B = new float[N];
-    float C = new float[N];
+    float* A = new float[N];
+    float* B = new float[N];
+    float* C = new float[N];
 
     init<<<1,N>>>(A,1.0)
     init<<<1,N>>>(B,2.0)
