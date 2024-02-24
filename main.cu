@@ -70,16 +70,6 @@ int main() {
             {7, 8, 9}
     };
 
-    for(int i = 0; i < N; i++){
-        AM[i] = new float[N];
-        BM[i] = new float[N];
-        CM[i] = new float[N];
-        for(int j = 0; j < N; j++){
-            AM[i][j] = 1.0;
-            BM[i][j] = 2.0;
-            CM[i][j] = 0.0;
-        }
-    }
 
     init(A,1.0);
     init(B,2.0);
