@@ -34,6 +34,8 @@ int main() {
 
     init(A,1.0);
     init(B,2.0);
+    print(A,N);
+    print(B,N);
     add<<<1,N>>>(A,B,C);
 
     print(A,N);
