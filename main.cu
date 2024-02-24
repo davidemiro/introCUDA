@@ -1,4 +1,5 @@
 #include <iostream>
+
 #define N 6
 
 //Define a kernel.
@@ -14,6 +15,8 @@ __global__ void init(float* X, float seed){
     X[i] = (float) (i) * seed;
 
 }
+
+using namespace std;
 
 void print(float* X,int N){
     for(int i = 0; i < N; i++){
