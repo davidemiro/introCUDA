@@ -12,7 +12,7 @@ __global__ void add(float* A, float* B, float* C){
 
 __global__ void init(float* X, float seed){
     int i = threadIdx.x;
-    X[i] = (float) (i) * seed;
+    X[i] = seed;
 
 }
 
