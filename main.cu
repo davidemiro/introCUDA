@@ -2,7 +2,7 @@
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
 
-#define N 6
+#define N 3
 
 //Define a kernel.
 //A KERNEL is a function is a function that can be called N times by N differents CUDA threads.
@@ -54,9 +54,21 @@ int main() {
     float* A = new float[N];
     float* B = new float[N];
     float* C = new float[N];
-    float AM[N][N] = new float[N][N];
-    float BM[N][N] = new float[N][N];
-    float CM[N][N] = new float[N][N];
+    float AM[N][N] = {
+            {1, 2, 3},
+            {4, 5, 6},
+            {7, 8, 9}
+    };
+    float BM[N][N] = {
+            {1, 2, 3},
+            {4, 5, 6},
+            {7, 8, 9}
+    };
+    float CM[N][N] = {
+            {1, 2, 3},
+            {4, 5, 6},
+            {7, 8, 9}
+    };
 
     for(int i = 0; i < N; i++){
         AM[i] = new float[N];
