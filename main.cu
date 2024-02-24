@@ -10,9 +10,11 @@ __global__ void add(float* A, float* B, float* C){
     C[i] = A[i] + B[i];
 }
 
-__global__ void init(float* X, float seed){
-    int i = threadIdx.x;
-    X[i] = seed;
+void init(float* X, float seed){
+    for(int i = 0; i < N; i++){
+        X[i] = seed;
+    }
+
 
 }
 
@@ -30,8 +32,8 @@ int main() {
     float* B = new float[N];
     float* C = new float[N];
 
-    init<<<1,N>>>(A,1.0);
-    init<<<1,N>>>(B,2.0);
+    init(A,1.0);
+    init(B,2.0);
     add<<<1,N>>>(A,B,C);
 
     print(A,N);
