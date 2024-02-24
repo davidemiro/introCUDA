@@ -12,8 +12,10 @@ __global__ void add(float* A, float* B, float* C){
     C[i] = A[i] + B[i];
 }
 
+
+
 // the threadIdx.x is a 3D vector (threadIdx.x, threadIdx.y, threadIdx.z) for
-__global__ void MatAdd(float A[N][N], float B[N][N],
+__global__ void matrix_add(float A[N][N], float B[N][N],
                        float C[N][N])
 {
     int i = threadIdx.x;
@@ -38,16 +40,47 @@ void print(float* X,int num){
     cout << endl;
 }
 
+void matrix_print(float X[N][N]){
+    for(int i = 0; i < N; i++){
+        for(int j = 0; j < N; j++){
+            cout << X[i][j];
+        }
+        cout << endl;
+    }
+    cout << endl;
+}
+
 int main() {
     float* A = new float[N];
     float* B = new float[N];
     float* C = new float[N];
+    float* AM = new float[N][N];
+    float* BM = new float[N][N];
+    float* CM = new float[N][N];
+
+    for(int i = 0; i < N; i++){
+        AM[i] = new float[N];
+        BM[i] = new float[N];
+        CM[i] = new float[N];
+        for(int j = 0; j < N; j++){
+            AM[i][j] = 1.0;
+            BM[i][j] = 2.0;
+            CM[i][j] = 0.0;
+        }
+    }
 
     init(A,1.0);
     init(B,2.0);
     print(A,N);
     print(B,N);
     add<<<1,N>>>(A,B,C);
+
+    int numBlocks = 1;
+    dim3 threadsPerBlock(N, N);
+    matrix_add<<<numBlocks, threadsPerBlock>>>(AM, BM, CM);
+
+
+
     cudaDeviceSynchronize();
 
     print(A,N);
