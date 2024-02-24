@@ -54,9 +54,9 @@ int main() {
     float* A = new float[N];
     float* B = new float[N];
     float* C = new float[N];
-    float* AM = new float[N][N];
-    float* BM = new float[N][N];
-    float* CM = new float[N][N];
+    float AM[N][N] = new float[N][N];
+    float BM[N][N] = new float[N][N];
+    float CM[N][N] = new float[N][N];
 
     for(int i = 0; i < N; i++){
         AM[i] = new float[N];
