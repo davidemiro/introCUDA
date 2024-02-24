@@ -18,8 +18,8 @@ __global__ void init(float* X, float seed){
 
 using namespace std;
 
-void print(float* X,int N){
-    for(int i = 0; i < N; i++){
+void print(float* X,int num){
+    for(int i = 0; i < num; i++){
         cout << X[i];
     }
     cout << endl;
