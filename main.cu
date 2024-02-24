@@ -30,8 +30,8 @@ int main() {
     float* B = new float[N];
     float* C = new float[N];
 
-    init<<<1,N>>>(A,1.0)
-    init<<<1,N>>>(B,2.0)
+    init<<<1,N>>>(A,1.0);
+    init<<<1,N>>>(B,2.0);
     add<<<1,N>>>(A,B,C);
 
     print(A,N);
