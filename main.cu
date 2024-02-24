@@ -1,4 +1,6 @@
 #include <iostream>
+#include "cuda_runtime.h"
+#include "device_launch_parameters.h"
 
 #define N 6
 
@@ -8,6 +10,15 @@
 __global__ void add(float* A, float* B, float* C){
     int i = threadIdx.x;
     C[i] = A[i] + B[i];
+}
+
+// the threadIdx.x is a 3D vector (threadIdx.x, threadIdx.y, threadIdx.z) for
+__global__ void MatAdd(float A[N][N], float B[N][N],
+                       float C[N][N])
+{
+    int i = threadIdx.x;
+    int j = threadIdx.y;
+    C[i][j] = A[i][j] + B[i][j];
 }
 
 void init(float* X, float seed){
@@ -37,6 +48,7 @@ int main() {
     print(A,N);
     print(B,N);
     add<<<1,N>>>(A,B,C);
+    cudaDeviceSynchronize();
 
     print(A,N);
     print(B,N);
