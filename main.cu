@@ -1,81 +1,85 @@
 #include <iostream>
-#include "cuda_runtime.h"
-#include "device_launch_parameters.h"
+#include <cuda_runtime.h>
 
-#define N 3
+// CUDA kernel for matrix addition
+__global__ void matrixAdd(float *A, float *B, float *C, int numRows, int numCols) {
+    int row = blockIdx.y * blockDim.y + threadIdx.y;
+    int col = blockIdx.x * blockDim.x + threadIdx.x;
 
-//Define a kernel.
-//A KERNEL is a function is a function that can be called N times by N differents CUDA threads.
-//The number of threads that have to run the function is specified by the syntax <<1,N>> when you call the function
-__global__ void add(float* A, float* B, float* C){
-    int i = threadIdx.x;
-    C[i] = A[i] + B[i];
-}
-
-
-
-// the threadIdx.x is a 3D vector (threadIdx.x, threadIdx.y, threadIdx.z) for
-__global__ void matrix_add(float A[N][N], float B[N][N],
-                       float C[N][N])
-{
-    int i = threadIdx.x;
-    int j = threadIdx.y;
-    C[i][j] = A[i][j] + B[i][j];
-}
-
-void init(float* X, float seed){
-    for(int i = 0; i < N; i++){
-        X[i] = seed;
+    if (row < numRows && col < numCols) {
+        int idx = row * numCols + col;
+        C[idx] = A[idx] + B[idx];
     }
-
-
 }
 
-using namespace std;
-
-void print(float* X,int num){
-    for(int i = 0; i < num; i++){
-        cout << X[i];
+void initializeMatrix(float *matrix, int numRows, int numCols) {
+    for (int i = 0; i < numRows * numCols; ++i) {
+        matrix[i] = static_cast<float>(i);
     }
-    cout << endl;
 }
 
-void matrix_print(float X[N][N]){
-    for(int i = 0; i < N; i++){
-        for(int j = 0; j < N; j++){
-            cout << X[i][j];
+void printMatrix(const float *matrix, int numRows, int numCols) {
+    for (int i = 0; i < numRows; ++i) {
+        for (int j = 0; j < numCols; ++j) {
+            std::cout << matrix[i * numCols + j] << " ";
         }
-        cout << endl;
+        std::cout << std::endl;
     }
-    cout << endl;
 }
 
 int main() {
-    float AM[N][N] = {
-            {1, 2, 3},
-            {4, 5, 6},
-            {7, 8, 9}
-    };
-    float BM[N][N] = {
-            {1, 2, 3},
-            {4, 5, 6},
-            {7, 8, 9}
-    };
-    float CM[N][N];
+    // Define matrix dimensions
+    const int numRows = 4;
+    const int numCols = 4;
+    const int matrixSize = numRows * numCols * sizeof(float);
 
+    // Allocate host memory
+    float *h_A = (float *)malloc(matrixSize);
+    float *h_B = (float *)malloc(matrixSize);
+    float *h_C = (float *)malloc(matrixSize);
 
+    // Initialize matrices
+    initializeMatrix(h_A, numRows, numCols);
+    initializeMatrix(h_B, numRows, numCols);
 
-    int numBlocks = 1;
-    dim3 threadsPerBlock(N, N);
-    matrix_add<<<numBlocks, threadsPerBlock>>>(AM, BM, CM);
+    // Allocate device memory
+    float *d_A, *d_B, *d_C;
+    cudaMalloc((void **)&d_A, matrixSize);
+    cudaMalloc((void **)&d_B, matrixSize);
+    cudaMalloc((void **)&d_C, matrixSize);
 
+    // Copy matrices from host to device
+    cudaMemcpy(d_A, h_A, matrixSize, cudaMemcpyHostToDevice);
+    cudaMemcpy(d_B, h_B, matrixSize, cudaMemcpyHostToDevice);
 
+    // Define block and grid sizes
+    dim3 threadsPerBlock(16, 16);
+    dim3 blocksPerGrid((numCols + threadsPerBlock.x - 1) / threadsPerBlock.x,
+                       (numRows + threadsPerBlock.y - 1) / threadsPerBlock.y);
 
-    //cudaDeviceSynchronize();
+    // Launch the kernel
+    matrixAdd<<<blocksPerGrid, threadsPerBlock>>>(d_A, d_B, d_C, numRows, numCols);
 
-    matrix_print(AM);
-    matrix_print(BM);
-    matrix_print(CM);
+    // Copy result matrix from device to host
+    cudaMemcpy(h_C, d_C, matrixSize, cudaMemcpyDeviceToHost);
+
+    // Print the result
+    std::cout << "Matrix A:" << std::endl;
+    printMatrix(h_A, numRows, numCols);
+    std::cout << "Matrix B:" << std::endl;
+    printMatrix(h_B, numRows, numCols);
+    std::cout << "Matrix C (A + B):" << std::endl;
+    printMatrix(h_C, numRows, numCols);
+
+    // Free device memory
+    cudaFree(d_A);
+    cudaFree(d_B);
+    cudaFree(d_C);
+
+    // Free host memory
+    free(h_A);
+    free(h_B);
+    free(h_C);
+
     return 0;
-
 }
