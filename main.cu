@@ -67,6 +67,7 @@ int main() {
 
     int numBlocks = 1;
     dim3 threadsPerBlock(N, N);
+    cout << threadsPerBlock;
     matrix_add<<<numBlocks, threadsPerBlock>>>(AM, BM, CM);
 
 
