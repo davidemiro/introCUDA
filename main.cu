@@ -75,7 +75,7 @@ int main() {
 
 
 
-    cudaDeviceSynchronize();
+    //cudaDeviceSynchronize();
 
     matrix_print(AM);
     matrix_print(BM);
