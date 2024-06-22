@@ -51,9 +51,6 @@ void matrix_print(float X[N][N]){
 }
 
 int main() {
-    float* A = new float[N];
-    float* B = new float[N];
-    float* C = new float[N];
     float AM[N][N] = {
             {1, 2, 3},
             {4, 5, 6},
@@ -71,11 +68,6 @@ int main() {
     };
 
 
-    init(A,1.0);
-    init(B,2.0);
-    print(A,N);
-    print(B,N);
-    add<<<1,N>>>(A,B,C);
 
     int numBlocks = 1;
     dim3 threadsPerBlock(N, N);
@@ -85,9 +77,9 @@ int main() {
 
     cudaDeviceSynchronize();
 
-    print(A,N);
-    print(B,N);
-    print(C,N);
+    matrix_print(AM);
+    matrix_print(BM);
+    matrix_print(CM);
     return 0;
 
 }
